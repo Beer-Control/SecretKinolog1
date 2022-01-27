@@ -3,40 +3,36 @@ package SecretViewer;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.*;
+
 public class SecretFilmViewerBot extends TelegramLongPollingBot {
-    @Override
+
+    public ArrayList<String> idOfPlayers = new ArrayList<>();
+    public ArrayList<String> idOfChats = new ArrayList<>();
+
+    //    @Override
     public void onUpdateReceived(Update update) {
-        // TODO
-        // We check if the update has a message and the message has text
-        if (update.hasMessage() && update.getMessage().hasText()) {
-
-            SendMessage message = new SendMessage(); // Create a SendMessage object with mandatory fields
-            message.setChatId(update.getMessage().getChatId().toString());
-            message.setText(update.getMessage().getFrom().getId().toString());
-            if (update.getMessage().getFrom().getId() == 525230043)
-                message.setText("Яна, я тебя люблю! Твой ID в телеграм " + update.getMessage().getFrom().getId());
-            try {
-                execute(message); // Call method to send the message
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-//            if (update.getMessage().getFrom().getId() == 525230043){
-//                {
-//                    message.setChatId(update.getMessage().getChatId().toString());
-//                    message.setText("Яна, я тебя люблю!");
-//                }
-//            }
-//            try {
-//                execute(message); // Call method to send the message
-//            } catch (TelegramApiException e) {
-//                e.printStackTrace();
-//            }
+        System.out.println(update);
+        String chatID = update.getMessage().getChatId().toString();
+        String fromName = update.getMessage().getFrom().getUserName();
+        String fromId = update.getMessage().getFrom().getId().toString();
+        String textMessage = update.getMessage().getText();
+        boolean isThisUser = update.getMessage().isUserMessage();
+        System.out.println(fromName + " написал:" + "\n \"" + textMessage + "\"" + "\n");
+        Answer answer = new Answer();
+        try {
+            answer.answer(chatID, fromId, fromName, textMessage, isThisUser);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-    }
+        System.out.println(answer.message);
 
 
+}
     @Override
     public String getBotUsername() {
         // TODO
@@ -49,3 +45,4 @@ public class SecretFilmViewerBot extends TelegramLongPollingBot {
         return "2134968539:AAHG2ZzvCt1zY1FzYWoI0NQoAyca0-AEORQ";
     }
 }
+
